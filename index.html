@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>REPRO.AI — Reproduce the Research. Verify the Results.</title>
+<style>
+:root{--bg:#07090f;--s1:#0d1119;--s2:#131926;--bd:#1f2738;--tx:#f3f5fa;--mu:#8792a8;--v:#8b5cf6;--c:#22d3ee;--b:#3b82f6;--ok:#34d399;--wa:#fbbf24;--er:#f87171;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f6f7fb;--s1:#fff;--s2:#eef0f7;--bd:#dde1ee;--tx:#10131c;--mu:#5d6882}}
+:root[data-theme="light"]{--bg:#f6f7fb;--s1:#fff;--s2:#eef0f7;--bd:#dde1ee;--tx:#10131c;--mu:#5d6882}
+:root[data-theme="dark"]{--bg:#07090f}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 Inter,Geist,system-ui,sans-serif}
+.m,code,pre{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.g{background:linear-gradient(120deg,var(--v),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:22px;padding:14px 5vw;transition:.3s}
+nav.s{background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+nav a{color:var(--mu);text-decoration:none;font-size:14px}nav a:hover{color:var(--tx)}.lg{font-weight:800;color:var(--tx)!important;letter-spacing:.5px}.sp{flex:1}
+.btn{border:1px solid var(--bd);background:var(--s2);color:var(--tx);padding:9px 16px;border-radius:10px;cursor:pointer;font:inherit;font-size:14px;transition:.2s}
+.btn:hover{transform:translateY(-1px);border-color:var(--v)}.pri{background:linear-gradient(120deg,var(--v),var(--b));border:0;color:#fff;box-shadow:0 6px 24px #8b5cf655}
+section{padding:70px 5vw;max-width:1200px;margin:auto}
+h1{font-size:clamp(36px,6vw,68px);line-height:1.05;margin:14px 0;letter-spacing:-1.5px}h2{font-size:clamp(26px,4vw,40px);letter-spacing:-1px;margin:0 0 28px}
+.badge{display:inline-block;border:1px solid var(--bd);padding:4px 12px;border-radius:99px;font-size:12px;color:var(--c)}
+.hero{text-align:center;position:relative}.hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:44px 44px;opacity:.35;mask-image:radial-gradient(ellipse at 50% 30%,#000,transparent 70%);animation:gr 12s linear infinite}
+@keyframes gr{to{background-position:44px 44px}}
+.hero>*{position:relative}.hero p{color:var(--mu);max-width:640px;margin:0 auto 22px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:20px;transition:.25s}.card:hover{transform:translateY(-3px);border-color:#8b5cf688}
+.card h3{margin:0 0 6px;font-size:16px}.card p{margin:0;color:var(--mu);font-size:14px}
+.pipe{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.node{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;font-size:13px;position:relative;animation:pl 6s infinite}
+.node:after{content:"→";position:absolute;right:-14px;top:9px;color:var(--c)}.node:last-child:after{content:""}
+@keyframes pl{0%,100%{border-color:var(--bd)}50%{border-color:var(--c)}}
+.float{font-size:12px;color:var(--ok);background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:5px 10px}
+.step b{color:var(--v);font-size:13px}
+.app{display:flex;border:1px solid var(--bd);border-radius:18px;overflow:hidden;background:var(--s1);min-height:640px}
+.side{width:190px;background:var(--bg);border-right:1px solid var(--bd);padding:14px 10px;flex:none}
+.side button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--mu);padding:9px 12px;border-radius:9px;cursor:pointer;font:inherit;font-size:14px}
+.side button:hover{background:var(--s2)}.side button.on{background:var(--s2);color:var(--tx);box-shadow:inset 2px 0 var(--v)}
+.main{flex:1;min-width:0;padding:20px}.top{display:flex;gap:10px;margin-bottom:18px;align-items:center}
+input,select{background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:8px 12px;border-radius:9px;font:inherit;font-size:13px}.top input{flex:1}
+.pg{display:none}.pg.on{display:block;animation:fi .4s}@keyframes fi{from{opacity:0;transform:translateY(8px)}}
+.kpi{font-size:30px;font-weight:700}.lab{color:var(--mu);font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}th{color:var(--mu);text-align:left;font-weight:500}td,th{padding:9px 8px;border-bottom:1px solid var(--bd)}.tw{overflow-x:auto}
+.st{padding:2px 9px;border-radius:99px;font-size:11px;border:1px solid}.Verified{color:var(--ok)}.Partial{color:var(--wa)}.Investigate{color:var(--c)}.Failed{color:var(--er)}
+.tag{font-size:10px;padding:1px 7px;border-radius:6px;border:1px solid;margin-left:6px}.Reported{color:var(--b)}.Inferred{color:var(--wa)}.User{color:var(--v)}.Miss{color:var(--er)}.NA{color:var(--mu)}.Simulated,.Pending{color:var(--v)}
+.drop{border:2px dashed var(--bd);border-radius:18px;padding:44px;text-align:center;cursor:pointer;transition:.2s}.drop:hover{border-color:var(--v);background:var(--s2)}
+.term{background:#05070b;color:#b7f7d0;border-radius:12px;padding:14px;height:200px;overflow:auto;font-size:12px}
+.bar{height:8px;background:var(--s2);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--v),var(--c));width:0;transition:1s}
+svg text{fill:var(--mu);font-size:10px}
+.dif{display:grid;grid-template-columns:1fr 1fr;font-size:13px}.dif div{padding:7px 12px;border-bottom:1px solid var(--bd)}.del{background:#f8717122}.add{background:#34d39922}
+.pn{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.doc{background:var(--s2);border-radius:12px;padding:24px}.doc h4{margin:18px 0 4px;color:var(--c)}
+#cop{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30}
+#cp{display:none;width:min(340px,90vw);background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 20px 50px #0008}
+#cl{height:220px;overflow:auto;font-size:13px}#cl p{margin:6px 0;padding:8px 10px;border-radius:10px;background:var(--s2)}#cl p.u{background:#8b5cf633;margin-left:30px}
+.chip{font-size:11px;cursor:pointer;border:1px solid var(--bd);border-radius:99px;padding:3px 9px;background:none;color:var(--mu)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--s2);border:1px solid var(--v);padding:10px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:.3s;z-index:40;font-size:13px}#toast.on{opacity:1}
+.vd{border:1px solid var(--bd);border-radius:12px;padding:12px 16px;margin:10px 0}.vd.ok{border-color:var(--ok)}.vd.mid{border-color:var(--wa)}.vd.bad{border-color:var(--er)}
+.iCritical{color:var(--er);font-weight:600}.iHigh{color:#fb923c;font-weight:600}.iMedium{color:var(--wa)}.iLow{color:var(--mu)}.Ext{color:var(--mu)}.Not{color:var(--wa)}
+.simb{border:1px dashed var(--wa);color:var(--wa);padding:8px 12px;border-radius:10px;margin:8px 0;font-size:12px;font-weight:700;letter-spacing:.3px}
+tr.x td{background:#f8717114}tr.y td{background:#fbbf2414}details summary{cursor:pointer}
+#evm{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:50;padding:20px}#evm>div{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:22px;max-width:560px;width:100%}blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--c);background:var(--s2);border-radius:6px}
+@media print{body *{visibility:hidden}#doc,#doc *{visibility:visible}#doc{position:absolute;left:0;top:0;width:100%;background:#fff;color:#000}#doc h4{color:#0369a1}}
+@media(max-width:760px){nav .hl{display:none}.app{flex-direction:column}.side{width:100%;display:flex;overflow-x:auto;border:0;border-bottom:1px solid var(--bd)}.side button{white-space:nowrap;width:auto}.dif{font-size:12px}}
+</style></head><body>
+<nav id="nv"><a class="lg" href="#top">◈ REPRO<span class="g">.AI</span></a><a class="hl" href="#prob">Platform</a><a class="hl" href="#how">How It Works</a><a class="hl" href="#app">Experiments</a><a class="hl" href="#integrity">Reproducibility</a><a class="hl" href="#" onclick="T('Docs are coming soon — see the in-app Report page');return false">Docs</a><span class="sp"></span><button class="btn" onclick="th()" title="Toggle theme">◐</button><button class="btn pri" onclick="go('app');P('paper')">Launch Experiment</button></nav>
+
+<section class="hero" id="top"><span class="badge">AI × ML Research × Reproducibility</span>
+<h1>Reproduce the Research.<br><span class="g">Verify the Results.</span></h1>
+<p><b style="color:var(--tx)">AI-powered reproducibility infrastructure for machine learning research.</b><br>Turn ML papers into executable experiments, compare reproduced results against published claims, and generate transparent reproducibility reports.</p>
+<button class="btn pri" onclick="go('app');P('paper')">Start Reproducing →</button> <button class="btn" onclick="go('app')">Explore the Platform</button>
+<p class="m" style="font-size:12px;margin-top:18px">paper → experiment → verification → reproducibility report</p>
+<div class="pipe"><div class="node">📄 Paper PDF</div><div class="node" style="animation-delay:1s">✦ AI extraction</div><div class="node" style="animation-delay:2s">⌘ Experiment graph</div><div class="node" style="animation-delay:3s">▶ Training run</div><div class="node" style="animation-delay:4s">∿ Metrics</div><div class="node" style="animation-delay:5s">✓ Verification</div></div>
+<div class="pipe" style="margin-top:22px"><span class="float">Architecture extracted</span><span class="float">Dataset identified</span><span class="float">Hyperparameters reconstructed</span><span class="float">Training complete</span><span class="float m">Result verification: 96%</span></div></section>
+
+<section id="prob"><h2>ML research is published.<br><span class="g">But can it be reproduced?</span></h2><div class="grid">
+<div class="card"><h3>Missing Details</h3><p>Implementation details are scattered across papers, appendices, repositories, or supplements.</p></div>
+<div class="card"><h3>Environment Drift</h3><p>Different CUDA, PyTorch, Python, hardware, or dependency versions can change results.</p></div>
+<div class="card"><h3>Hidden Variables</h3><p>Seeds, preprocessing, initialization, augmentation, and hyperparameters sway outcomes.</p></div>
+<div class="card"><h3>Result Uncertainty</h3><p>A reported metric does not guarantee another researcher can reproduce it.</p></div></div></section>
+
+<section id="how"><h2>One paper. <span class="g">One reproducible experiment.</span></h2><div class="grid">
+<div class="card step"><b class="m">01</b><h3>📄 Upload Paper</h3><p>PDF, LaTeX, repo or config.</p></div>
+<div class="card step"><b class="m">02</b><h3>✦ AI Extraction</h3><p>Methodology, datasets, hyperparameters.</p></div>
+<div class="card step"><b class="m">03</b><h3>⌘ Reconstruction</h3><p>Structured, editable experiment graph.</p></div>
+<div class="card step"><b class="m">04</b><h3>▶ Execute &amp; Verify</h3><p>Controlled runs, tracked environments.</p></div>
+<div class="card step"><b class="m">05</b><h3>▤ Generate Report</h3><p>Transparent, shareable evidence.</p></div></div>
+<div class="grid" style="margin-top:16px"><div class="card"><h3>AI Paper Parsing</h3><p>Extract methodology and experiment details.</p></div><div class="card"><h3>Experiment Diff</h3><p>See exactly what changed.</p></div><div class="card"><h3>Result Verification</h3><p>Compare reproduced vs published claims.</p></div></div></section>
+
+<section id="app"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px"><h2 style="margin:0">Product dashboard</h2></div>
+<div class="app"><div class="side" id="sd"></div><div class="main">
+<div class="top"><input id="q" placeholder="Search experiments..." oninput="tbl()"><span id="gs"></span><button class="btn" onclick="T('No new notifications')">🔔</button><span class="btn m">RS</span></div>
+<div class="pg on" id="pg-overview"><span class="badge">Simulated data — not from real runs</span><div class="grid" style="margin:16px 0" id="kp"></div>
+<select id="sf" onchange="tbl()"><option value="">All statuses</option><option>Verified</option><option>Partial</option><option>Investigate</option><option>Not executed</option><option>Simulated</option><option>Failed</option></select>
+<div class="tw"><table><thead><tr><th>Paper</th><th>Model</th><th>Dataset</th><th>Reported</th><th>Reproduced</th><th>Diff</th><th>Status</th></tr></thead><tbody id="tb"></tbody></table></div></div>
+
+<div class="pg" id="pg-paper"><h3>Start with a research paper.</h3><input type="file" id="fi" hidden accept=".pdf,.tex,.json,.yaml,.yml,.zip,.txt" onchange="up(this.files[0])"><div class="drop" id="dz" onclick="$('fi').click()" ondragover="event.preventDefault()" ondrop="event.preventDefault();up(event.dataTransfer.files[0])"><b>Drop your PDF here</b> or browse files<br><span class="lab">Supported: PDF · LaTeX · GitHub Repository · Experiment Config</span></div><br><button class="btn pri" onclick="proc()">Try with Example Paper</button>
+<div class="term m" id="pl" style="margin-top:14px;height:170px;display:none"></div>
+<div id="pi" style="display:none;margin-top:18px"><h3>Paper Intelligence <span class="tag Inferred">AI-generated · review before trusting</span></h3><div id="rk"></div>
+<div class="grid"><div class="card"><h3>Research question</h3><p id="pq">Can attention alone replace recurrence for sequence transduction?</p></div><div class="card"><h3>Methodology</h3><p id="pm">Encoder–decoder Transformer with multi-head self-attention.</p></div><div class="card"><h3>Evaluation</h3><p id="pe">BLEU on WMT14 EN→DE newstest2014.</p></div></div>
+<div class="tw"><table id="cf"></table></div><br><button class="btn pri" onclick="P('recon')">Continue to Reconstruction →</button></div></div>
+
+<div class="pg" id="pg-recon"><h3>Experiment Reconstruction</h3><div class="pn" id="gn"></div><div class="card"><h3 id="gt"></h3><div id="gf"></div></div>
+<p class="lab">Edit values freely — edited fields become <span class="User">User Configured</span>. Missing parameters are never silently guessed.</p><button class="btn pri" onclick="P('runner');run()">Reproduce ▶</button></div>
+
+<div class="pg" id="pg-runner"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><h3 class="m">Experiment #EXP-2048 <span id="rs" style="color:var(--ok)">● Idle</span></h3><div><button class="btn" onclick="pz()">Pause</button> <button class="btn" onclick="stp()">Stop</button> <button class="btn" onclick="run()">Restart</button> <button class="btn pri" onclick="P('results')">View Results →</button></div></div>
+<div class="simb">SIMULATION — NOT EXPERIMENTALLY VERIFIED · Loss curves, GPU and memory are generated in your browser. No model is trained.</div><div class="grid" style="margin:10px 0"><div class="card"><div class="lab">GPU util</div><div class="kpi m" id="gu">0%</div></div><div class="card"><div class="lab">Memory</div><div class="kpi m" id="me">0 GB</div></div><div class="card"><div class="lab">Epoch</div><div class="kpi m" id="ep">0/100</div></div><div class="card"><div class="lab">Train / Val loss</div><div class="kpi m" id="lo">–</div></div><div class="card"><div class="lab">Elapsed</div><div class="kpi m" id="el">0s</div></div></div>
+<div class="bar"><i id="pb"></i></div><svg id="ch" viewBox="0 0 600 140" style="width:100%;margin:8px 0"></svg><div class="term m" id="tm"></div></div>
+
+<div class="pg" id="pg-results"><div id="vd"></div>
+<div class="grid" style="margin:12px 0"><div class="card"><div class="lab">Published result</div><div class="kpi m" id="pr">–</div><div class="lab" id="prn">Reported by authors</div></div>
+<div class="card"><div class="lab">Reproduction status</div><div class="kpi" style="font-size:19px;color:var(--wa)">⚠ Not experimentally verified</div><div class="lab">Execution: not run. No reproduced result exists.</div></div></div>
+<h3>Reproduction Readiness</h3><div class="tw"><table id="rd"></table></div>
+<h3 style="margin-top:20px">Reproduction Blockers</h3><div id="bk"></div>
+<h3 style="margin-top:20px">Evidence dimensions</h3><p class="lab">Each dimension depends on what the paper reports. There is no single composite score.</p><div id="ev"></div>
+<h3 style="margin-top:20px">Experiment Diff</h3><div class="tw"><table id="df"></table></div>
+<details class="card" style="margin-top:20px"><summary><b>Simulation preview</b> <span class="lab">— illustrative only, not a reproduction</span></summary><div class="simb">SIMULATION — NOT EXPERIMENTALLY VERIFIED</div><svg viewBox="0 0 400 140" style="width:100%;max-width:520px"><text x="0" y="14" id="pt"></text><rect x="0" y="20" width="0" height="20" rx="4" fill="#3b82f6" class="rb" data-w="380"/><text x="0" y="68" id="rt"></text><rect x="0" y="74" width="0" height="20" rx="4" fill="#f59e0b" fill-opacity=".55" stroke="#f59e0b" stroke-dasharray="4" class="rb" data-w="378"/><text x="0" y="122" style="font-size:12px" id="dt"></text></svg></details>
+<div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" onclick="attempt()">▶ Attempt Reproduction</button><button class="btn" onclick="gq()">Generate author questions</button><button class="btn" onclick="gp()">Generate reproduction protocol</button><button class="btn pri" onclick="P('report')">Generate Report ▤</button></div>
+<div id="out" class="card" style="display:none;margin-top:14px"></div></div>
+
+<div class="pg" id="pg-report"><div class="doc" id="doc"></div><br>
+<button class="btn" onclick="window.print()">Export PDF</button> <button class="btn" onclick="shareRep()">Copy report text</button> <button class="btn" onclick="dlCfg()">Download Experiment Configuration</button></div>
+</div></div></section>
+
+<section id="integrity"><h2>Research integrity, <span class="g">built in</span></h2><div class="grid">
+<div class="card"><h3>Transparent assumptions</h3><p>Every value is tagged Reported, Inferred, User Configured or Verified.</p></div>
+<div class="card"><h3>Traceable configuration</h3><p>Each run stores its exact config, seed and environment.</p></div>
+<div class="card"><h3>Explicit uncertainty</h3><p>Missing information stays missing — never guessed silently.</p></div></div>
+<div style="text-align:center;margin-top:60px"><h2>Make every experiment reproducible.</h2><p style="color:var(--mu)">Turn published research into transparent, verifiable experiments.</p><button class="btn pri" onclick="go('app');P('paper')">Start an Experiment →</button> <button class="btn" onclick="go('app')">Explore the Platform</button></div></section>
+
+<div id="cop"><div id="cp"><b>REPRO Copilot</b> <span class="badge">AI-powered</span><div id="cl"><p>Upload a paper, then ask me about it. I separate what the paper states from what I infer.</p></div><div class="pn" style="margin:6px 0"><button class="chip" onclick="ask('Why might my reproduced accuracy be lower than reported?')">Why is accuracy lower?</button><button class="chip" onclick="ask('Which hyperparameters and details are missing from this paper?')">What's missing?</button><button class="chip" onclick="ask('Which implementation details are stated vs. need to be inferred?')">What was inferred?</button></div><div style="display:flex;gap:6px"><input id="ci" style="flex:1" placeholder="Ask about your paper..." onkeydown="if(event.key==='Enter')ask()"><button class="btn pri" onclick="ask()">Send</button></div></div><button class="btn pri" onclick="tc()">✦ REPRO Copilot</button></div>
+<div id="evm" onclick="if(event.target===this)this.style.display='none'"><div id="evb"></div></div>
+<div id="toast"></div>
+<script>
+const $=id=>document.getElementById(id),sl=ms=>new Promise(r=>setTimeout(r,ms));
+const T=t=>{const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2200)};
+const go=id=>$(id).scrollIntoView();
+const th=()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light'};
+onscroll=()=>$('nv').classList.toggle('s',scrollY>10);
+const pages=[['Overview','overview'],['Papers','paper'],['Experiments','overview'],['Datasets','recon'],['Models','recon'],['Runs','runner'],['Reports','report'],['Reproducibility','results'],['Settings',null]];
+$('sd').innerHTML=pages.map((p,i)=>`<button onclick="${p[1]?`P('${p[1]}',${i})`:`T('Settings unavailable')`}" id="sb${i}">${p[0]}</button>`).join('');
+function P(id,i){if(['recon','runner','results','report'].includes(id)&&!window.PAPER)loadPaper(DEMO,true);document.querySelectorAll('.pg').forEach(e=>e.classList.toggle('on',e.id==='pg-'+id));document.querySelectorAll('.side button').forEach(b=>b.classList.remove('on'));const k=i??pages.findIndex(p=>p[1]===id);$('sb'+k).classList.add('on');if(id==='results')res();if(id==='report')rep();if(id==='overview')kp();}
+$('sb0').classList.add('on');
+const K=[['Papers Analyzed',24],['Experiments Reproduced',18],['Successful Reproductions',14],['Average Reproducibility',87,'%']];
+function kp(){$('kp').innerHTML=K.map(k=>`<div class="card"><div class="lab">${k[0]}</div><div class="kpi m" data-n="${k[1]}" data-s="${k[2]||''}">0</div></div>`).join('');document.querySelectorAll('[data-n]').forEach(e=>{let n=0,t=+e.dataset.n;const i=setInterval(()=>{n=Math.min(t,n+Math.ceil(t/25));e.textContent=n+e.dataset.s;if(n>=t)clearInterval(i)},30)})}kp();
+const E=[['Attention Is All You Need','Transformer','WMT14','28.4 BLEU','28.1 BLEU','-1.1%','Verified'],['ResNet','ResNet-50','ImageNet','76.1%','75.8%','-0.3%','Verified'],['BERT','BERT-base','GLUE','79.6','77.9','-2.1%','Partial'],['ViT','ViT-B/16','ImageNet','77.9%','74.2%','-4.7%','Investigate'],['GAN Variant X','DCGAN','CIFAR-10','FID 24.1','FID 41.7','+73%','Failed']];
+function tbl(){const q=$('q').value.toLowerCase(),s=$('sf').value;$('tb').innerHTML=E.filter(r=>(!s||r[6]===s)&&r.join(' ').toLowerCase().includes(q)).map(r=>`<tr>${r.slice(0,6).map((c,i)=>`<td class="${i>2?'m':''}">${c}</td>`).join('')}<td><span class="st ${r[6]}">${r[6]}</span></td></tr>`).join('')||'<tr><td colspan=7>No experiments match.</td></tr>'}tbl();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const L={Reported:'🟢 Reported in paper',Inferred:'🟡 AI inferred',Miss:'🔴 Not reported',NA:'⚪ Not applicable',User:'🟣 User configured',Ext:'⚪ Not extracted'};
+const PARAMS=['Model','Dataset','Optimizer','Learning rate','Batch size','Epochs','Seed','Hardware','Precision','Momentum','Weight decay','Scheduler','Max sequence length','Warmup steps','Dropout','Software versions'];
+const IMP={Model:'Critical',Dataset:'Critical','Learning rate':'Critical',Epochs:'Critical','Batch size':'High',Optimizer:'High',Seed:'High','Max sequence length':'High','Warmup steps':'High',Scheduler:'Medium','Weight decay':'Medium',Dropout:'Medium','Software versions':'Medium',Precision:'Low',Hardware:'Low',Momentum:'Low'};
+const WHY={'Learning rate':'The learning rate strongly affects convergence and final accuracy, and no other setting can compensate for it.',Seed:'Seeds control initialization and data order, so results can differ between runs.','Warmup steps':'Warmup changes early training stability and can change the final score.','Max sequence length':'Truncation length changes which tokens the model sees.',Dropout:'Dropout regularizes training and changes generalization.','Software versions':'Library versions can change numerical behaviour and defaults.',Epochs:'Training length decides how far the model converges.','Batch size':'Batch size interacts with the learning rate and gradient noise.',Optimizer:'The optimizer changes the training dynamics.','Weight decay':'Weight decay regularizes training and affects the final score.',Scheduler:'The schedule shapes the learning rate over training.',Hardware:'Hardware can affect speed and sometimes numerical results.',Precision:'Mixed precision can change numerical results slightly.',Momentum:'Momentum changes optimization dynamics where it applies.',Model:'Without a precise definition the experiment cannot be rebuilt.',Dataset:'Without the exact dataset and split the experiment cannot be rebuilt.'};
+const NM={Model:'Model architecture'};
+const N={Dataset:['Dataset'],Preprocessing:['Max sequence length'],Model:['Model'],Training:['Optimizer','Learning rate','Batch size','Epochs','Seed','Momentum','Weight decay','Scheduler','Warmup steps','Dropout'],Environment:['Hardware','Precision','Software versions'],Evaluation:['Metric']};
+const V={};PARAMS.concat(['Metric']).forEach(k=>V[k]='');
+const tg=c=>({Reported:'Reported',Inferred:'Inferred',Missing:'Miss',NotApplicable:'NA'}[c.tag]||'Miss');
+function stOf(k){if(window.ED&&ED[k])return['User',L.User];if(!window.PAPER)return['Miss',L.Miss];if(k==='Metric'){return (PAPER.reported_metric&&PAPER.reported_metric.name)?['Reported',L.Reported]:['Miss',L.Miss]}const c=PAPER.config.find(x=>x.param===k);if(!c)return['Ext',L.Ext];const t=tg(c);return[t,L[t]]}
+function node(n){$('gt').textContent=n;$('gf').innerHTML=N[n].map(k=>{const st=stOf(k);return `<div style="display:flex;gap:10px;margin:6px 0;align-items:center;flex-wrap:wrap"><span style="width:150px" class="lab">${k}</span><input value="${esc(V[k]||'')}" placeholder="⚠ Not reported — set a value" oninput="V['${k}']=this.value;(window.ED=window.ED||{})['${k}']=1;this.nextSibling.className='tag User';this.nextSibling.textContent=L.User"><span class="tag ${st[0]}">${st[1]}</span></div>`}).join('')}
+$('gn').innerHTML=Object.keys(N).map(n=>`<button class="btn" onclick="node('${n}')">${n}</button>`).join('<span style="color:var(--c)">→</span>');node('Training');
+const SEC4='2. Method',SEC5='5. Reproducibility Notes',NOTE='The learning rate, warmup steps, maximum sequence length, LoRA dropout and random seeds are not reported.';
+const Q1='We use the AdamW optimizer with weight decay 0.01 and a batch size of 32.',Q2='Models are trained for 3 epochs with a linear learning-rate decay.',Q3='Training uses mixed precision (fp16) on a single GPU.';
+const rp=(param,value,evidence,section)=>({param,value,tag:'Reported',evidence,section,ev_ok:true}),ms=(param,withNote)=>({param,value:'Not stated',tag:'Missing',evidence:withNote?NOTE:'',section:withNote?SEC5:'',ev_ok:!!withNote});
+const DEMO={example:true,title:'SentiLite: Parameter-Efficient Fine-Tuning of a Small Transformer for Sentiment Classification',summary:{question:'Can low-rank adapters match full fine-tuning of a compact encoder on sentiment classification?',methodology:'A 6-layer distilled BERT-style encoder (66M parameters) fine-tuned with LoRA (rank 8, scaling 16) on query and value projections, trained with AdamW, batch size 32, for 3 epochs.',evaluation:'Accuracy on the SST-2 validation set (872 sentences).'},reported_metric:{name:'validation accuracy',value:'91.8%'},code_available:'No',config:[
+rp('Model','6-layer distilled BERT-style encoder + LoRA (r=8, scaling 16)','The backbone is a 6-layer distilled BERT-style encoder with hidden size 768 and 12 attention heads.',SEC4),
+rp('Dataset','SST-2 (GLUE benchmark)','We use SST-2 from the GLUE benchmark (67,349 training sentences, 872 validation sentences).',SEC4),
+rp('Optimizer','AdamW',Q1,SEC4),ms('Learning rate',1),rp('Batch size','32',Q1,SEC4),rp('Epochs','3',Q2,SEC4),ms('Seed',1),rp('Hardware','Single GPU',Q3,SEC4),rp('Precision','FP16 mixed precision',Q3,SEC4),
+{param:'Momentum',value:'Not applicable',tag:'NotApplicable',evidence:'',section:'',ev_ok:false},rp('Weight decay','0.01',Q1,SEC4),rp('Scheduler','Linear learning-rate decay',Q2,SEC4),ms('Max sequence length',1),ms('Warmup steps',1),ms('Dropout',1),ms('Software versions',0)]};
+function res(){const S=stats(),R=S.R,m=PAPER.reported_metric||{};
+$('vd').innerHTML=vdHTML();$('pr').textContent=PUBS||'Not stated';$('prn').textContent='Reported by authors'+(m.name?' · '+m.name:'');
+const codeRow={Yes:['Reported','🟢 Code released'],No:['Miss','🔴 Code not released']}[PAPER.code_available]||['Inferred','🟡 Unclear'];
+$('rd').innerHTML='<tr><th>Component</th><th>Status</th><th>Impact if missing</th></tr>'+R.filter(r=>r.tag!=='NotApplicable').map(r=>{const t=tg(r);return `<tr><td>${esc(NM[r.param]||r.param)}</td><td><span class="tag ${t}">${L[t]}</span></td><td>${r.tag==='Reported'?'—':'<span class="i'+r.impact+'">'+r.impact+'</span>'}</td></tr>`}).join('')+`<tr><td>Code</td><td><span class="tag ${codeRow[0]}">${codeRow[1]}</span></td><td>—</td></tr>`;
+const bl=S.crit.concat(S.high),oth=S.mis.filter(r=>bl.indexOf(r)<0);
+$('bk').innerHTML=bl.length?`<div class="card" style="border-color:var(--er)">${bl.map(r=>`<div style="margin:8px 0"><b>🔴 ${esc(r.param)}</b> — not reported · <span class="i${r.impact}">${r.impact}</span>${ED[r.param]&&V[r.param]?' · <span class="lab">you set: '+esc(V[r.param])+' (unverified)</span>':''}<div class="lab">${esc(r.why)}</div></div>`).join('')}${oth.length?'<div class="lab">Also not reported: '+esc(oth.map(r=>r.param).join(', '))+'</div>':''}<div style="margin-top:8px"><b>Exact reproduction cannot currently be guaranteed.</b></div></div>`:'<div class="card">No critical or high-impact blockers found.</div>';
+const envs=R.filter(r=>['Hardware','Precision','Software versions'].indexOf(r.param)>=0&&r.tag!=='NotApplicable'),envRep=envs.filter(r=>r.tag==='Reported').length,envP=Math.round(100*envRep/(envs.length||1));
+const seedR=R.find(r=>r.param==='Seed')||{},dsR=R.find(r=>r.param==='Dataset')||{};
+const why=t=>`<details><summary class="lab">Why?</summary><div class="lab">${t}</div></details>`;
+const row=(lab,tip,body,w,bar)=>`<div style="margin:14px 0" title="${esc(tip)}"><div style="display:flex;justify-content:space-between;gap:10px"><span>${lab}</span><span class="m">${body}</span></div>${bar!=null?'<div class="bar"><i data-w="'+bar+'"></i></div>':''}${why(w)}</div>`;
+$('ev').innerHTML=row('Code availability','Whether the paper says code is released',codeRow[1],'Based on the paper\'s own statement about code release.')
++row('Dataset identified','Whether the dataset is named in the paper',dsR.tag==='Reported'?'🟢 Yes':'🔴 No','Checks that the paper explicitly names the dataset.')
++row('Configuration completeness','Share of applicable parameters the paper explicitly reports',S.rep.length+' of '+S.ap.length+' · '+S.comp+'%',`${S.rep.length} of ${S.ap.length} applicable parameters are explicitly reported. ${S.inf.length} AI inferred, ${S.mis.length} not reported; ${R.length-S.ap.length} not applicable (excluded from the count). Completeness = reported ÷ applicable.`,S.comp)
++row('Environment details reported','Hardware, numeric precision and software versions the paper states',envRep+' of '+envs.length+' · '+envP+'%','Counts hardware, numeric precision and software versions that the paper explicitly reports. Software versions count only when version numbers are given.',envP)
++row('Seed','Whether a random seed is reported',seedR.tag==='Reported'?'🟢 Reported: '+esc(seedR.value):(ED.Seed&&V.Seed?'🟣 Set by you ('+esc(V.Seed)+') — unverified':'🔴 Not reported'),'A reported seed allows identical initialization and data order.')
++row('Result consistency','Needs an executed run','— not available','A reproduced result is required to measure consistency. This prototype has not executed the experiment.');
+$('df').innerHTML='<tr><th>Parameter</th><th>Published</th><th>Reproduction config</th><th>Impact</th></tr>'+R.map(r=>{const na=r.tag==='NotApplicable',cur=V[r.param],ed=!!ED[r.param];let pub,mine,imp,cls='';
+if(na){pub='Not applicable';mine='—';imp='—'}
+else if(r.tag==='Missing'){pub='Not reported';mine=cur?cur+' (you)':'Not configured';imp=cur?'🟣 Set by you — unverified':`<span class="i${r.impact}">${r.impact}</span>${why(esc(r.why))}`;cls=cur?'y':'x'}
+else{pub=r.value;mine=cur||'—';imp=r.tag==='Inferred'?'🟡 AI inferred (unconfirmed)':((!ed||cur===r.value)?'🟢 Match':'🟡 Changed by you');cls=(ed&&cur!==r.value)?'y':''}
+return `<tr class="${cls}"><td>${esc(r.param)}</td><td class="m">${esc(pub)}</td><td class="m">${esc(mine)}</td><td>${imp}</td></tr>`}).join('');
+if(PUB){const dl=window.SIM=window.SIM||PUB*(.002+Math.random()*.006),sm=PUB-dl;$('pt').textContent='Published '+PUBS+' (reported)';$('rt').textContent='Simulated '+sm.toFixed(1)+UNIT+' (illustrative)';$('dt').textContent='Illustrative gap −'+(dl/PUB*100).toFixed(1)+'% — not a reproduction';document.querySelectorAll('.rb')[1].dataset.w=Math.round(380*sm/PUB)}else{$('pt').textContent='Published metric not stated';$('rt').textContent='';$('dt').textContent=''}
+setTimeout(()=>{document.querySelectorAll('.bar i[data-w]').forEach(i=>i.style.width=i.dataset.w+'%');document.querySelectorAll('.rb').forEach(r=>r.setAttribute('width',r.dataset.w))},80)}
+async function proc(){const l=$('pl');l.style.display='block';l.innerHTML='';for(const t of['Loading the SentiLite sample paper...','Extracting methodology...','Identifying model architecture...','Finding datasets...','Extracting hyperparameters...','Matching each value to a sentence in the paper...','Detecting missing information...']){l.innerHTML+=t+'<br>';await sl(450)}loadPaper(DEMO);l.innerHTML+='✓ Precomputed example loaded. Upload your own PDF for live AI analysis.'}
+const SB='https://zhdrxrpjkzheubxicxwk.supabase.co',KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoZHJ4cnBqa3poZXVieGljeHdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MDk2MTMsImV4cCI6MjEwNjM4NTYxM30.23yvll7ov9U5HsBpbgFBDWEZmZKkLN5VwG0L7f7aOd8',H={apikey:KEY,Authorization:'Bearer '+KEY};
+async function up(f){if(!f)return;const p=Date.now()+'-'+f.name.replace(/[^\w.-]/g,'_');T('Uploading '+f.name+'...');
+try{const r=await fetch(SB+'/storage/v1/object/papers/'+p,{method:'POST',headers:{...H,'Content-Type':f.type||'application/pdf'},body:f});if(!r.ok)throw new Error('Storage '+r.status);
+fetch(SB+'/rest/v1/uploads',{method:'POST',headers:{...H,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({file_name:f.name,storage_path:p,file_type:f.type,size_bytes:f.size})}).catch(()=>{});window.storagePath=p}catch(e){T('Upload failed: '+e.message);return}
+analyze()}
+async function analyze(){const l=$('pl');l.style.display='block';l.innerHTML='Uploaded ✓<br>Reading PDF...<br>Analyzing with AI (10-20s)...<br>';$('pi').style.display='none';
+try{const r=await fetch('/.netlify/functions/analyze',{method:'POST',body:JSON.stringify({storage_path:window.storagePath})});const d=await r.json();if(!r.ok)throw new Error('['+(d.stage||'error')+'] '+d.error);
+loadPaper(d);const e=d.evidence_stats;l.innerHTML+='✓ Analyzed from your upload: '+esc(d.title||'')+(e?'<br>Evidence check: '+e.verified+' of '+e.claimed+' quotes found verbatim in the paper text':'')}
+catch(e){l.innerHTML+='<span style="color:var(--er)">✗ '+esc(e.message)+'</span> <button class="btn" onclick="analyze()">Retry</button>';T('Analysis failed')}}
+const EN=()=>parseInt(V.Epochs)||100,EPN=()=>Math.max(1,Math.ceil(ep/100*EN()));
+const IMPV=c=>['Critical','High','Medium','Low'].indexOf(c.impact)>=0?c.impact:(IMP[c.param]||'Medium');
+function stats(){const R=PAPER.config.map(c=>Object.assign({},c,{impact:IMPV(c),why:c.why||WHY[c.param]||'This detail affects whether the experiment can be rebuilt.'}));
+const ap=R.filter(r=>r.tag!=='NotApplicable'),rep=ap.filter(r=>r.tag==='Reported'),inf=ap.filter(r=>r.tag==='Inferred'),mis=ap.filter(r=>r.tag==='Missing');
+const crit=mis.filter(r=>r.impact==='Critical'),high=mis.filter(r=>r.impact==='High');
+const v=(crit.length>=3||mis.length>=8)?['bad','🔴','Not reproducible as published']:((crit.length===0&&high.length===0&&mis.length<=2)?['ok','🟢','Ready to attempt reproduction']:['mid','🟠','Partially reproducible']);
+const risk=(crit.length>=1||high.length>=3)?'HIGH':((high.length>=1||mis.length>=2)?'MEDIUM':'LOW');
+return{R,ap,rep,inf,mis,crit,high,v,risk,comp:Math.round(100*rep.length/(ap.length||1))}}
+function vdHTML(){const S=stats();return `<div class="vd ${S.v[0]}"><b>${S.v[1]} ${S.v[2]}</b> <span class="lab">· Execution: not run · ${S.crit.length+S.high.length} critical or high-impact details not reported</span></div>`}
+function evw(i){const c=PAPER.config[i],t=tg(c);$('evb').innerHTML=`<h3>${esc(c.param)}: ${esc(c.value)}</h3><p><span class="tag ${t}">${L[t]}</span> <span class="lab">📄 ${esc(c.section||'Section not identified')}</span></p><blockquote>“${esc(c.evidence)}”</blockquote><p class="lab">✓ Exact-text check: this sentence was found in the extracted paper text.</p><button class="btn" onclick="$('evm').style.display='none'">Close</button>`;$('evm').style.display='flex'}
+function loadPaper(d,quiet){d.config.forEach(c=>{if(['Reported','Inferred','Missing','NotApplicable'].indexOf(c.tag)<0)c.tag='Missing'});
+Object.keys(V).forEach(k=>V[k]='');d.config.forEach(c=>{if(c.param in V)V[c.param]=c.tag==='Missing'?'':c.value});
+window.PAPER=d;window.ED={};window.SIM=null;V.Metric=(d.reported_metric&&d.reported_metric.name)||'';
+const m=d.reported_metric||{};window.PUBS=m.value?String(m.value):'';window.PUB=parseFloat(PUBS)||null;window.UNIT=PUBS.replace(/[0-9.\s]/g,'');
+$('pq').textContent=d.summary.question||'';$('pm').textContent=d.summary.methodology||'';$('pe').textContent=d.summary.evaluation||'';
+$('cf').innerHTML='<tr><th>Parameter</th><th>Value</th><th>Status</th><th>Evidence</th></tr>'+d.config.map((c,i)=>{const t=tg(c);return `<tr><td>${esc(c.param)}</td><td class="m">${esc(c.value||'Not reported')}</td><td><span class="tag ${t}">${L[t]}</span></td><td>${c.evidence?`<button class="chip" onclick="evw(${i})">📄 ${esc(c.section||'Paper')} · View evidence</button>`:(c.tag==='Inferred'?'<span class="lab">No supporting quote</span>':'<span class="lab">—</span>')}</td></tr>`}).join('');
+const S=stats();$('rk').innerHTML=`<div class="vd ${S.risk==='HIGH'?'bad':S.risk==='MEDIUM'?'mid':'ok'}">Reproducibility risk: <b>${S.risk}</b> · ${S.v[1]} ${S.v[2]} · ${S.crit.length+S.high.length} critical or high-impact details not reported${d.example?'<div class="lab">Precomputed example from the SentiLite sample paper. Upload your own PDF for live AI analysis.</div>':''}</div>`;
+$('gs').textContent=S.v[1]+' '+S.v[2];$('gs').className='st '+({ok:'Verified',mid:'Partial',bad:'Failed'}[S.v[0]]);
+node('Training');
+if(window.MYROW){const i=E.indexOf(MYROW);if(i>-1)E.splice(i,1)}
+const g=k=>(d.config.find(c=>c.param===k)||{});
+window.MYROW=[d.title||'Uploaded paper',g('Model').value||'—',g('Dataset').value||'—',PUBS?PUBS+(m.name?' '+m.name:''):'n/a','Not executed','—','Not executed'];E.unshift(MYROW);tbl();
+$('pi').style.display='block';if(quiet)T('Loaded the precomputed SentiLite example')}
+const QS={'Learning rate':'What initial learning rate was used for training?',Seed:'Which random seed(s) were used, and over how many runs were results averaged?','Warmup steps':'How many learning-rate warmup steps (if any) were used?','Max sequence length':'What maximum sequence length was used for tokenization and truncation?',Dropout:'What dropout rate (including adapter dropout, if any) was used?','Software versions':'Which library versions (for example PyTorch and Transformers) were used?',Epochs:'How many epochs were trained, and was early stopping used?','Batch size':'What batch size was used?',Hardware:'Which GPU model and how many devices were used?',Optimizer:'Which optimizer and settings were used?','Weight decay':'What weight decay was used?',Scheduler:'Which learning-rate schedule was used?'};
+const qsList=()=>stats().mis.map(r=>QS[r.param]||('What value was used for '+r.param+'?'));
+function show(h){const o=$('out');o.style.display='block';o.innerHTML=h;o.scrollIntoView({behavior:'smooth'})}
+function cp(t){navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>T('Copied'),()=>T('Copy failed'))}
+function gq(){const q=qsList();window.CPT='Dear authors,\n\nWhile reproducing your paper we could not find the following details:\n'+q.map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\nThank you.';show('<h3>Clarification request to the authors</h3>'+(q.length?'<ol>'+q.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol><button class="btn" onclick="cp(window.CPT)">Copy</button>':'<p>No missing details.</p>')+'<p class="lab">Built from the details the paper does not report.</p>')}
+function gp(){const S=stats(),g=k=>{const r=S.R.find(x=>x.param===k);if(!r)return 'NOT REPORTED';const cur=V[k];if(r.tag==='NotApplicable')return 'not applicable';if(r.tag==='Missing')return cur?cur+'  [set by you, unverified]':'NOT REPORTED';return (cur||r.value)+(r.tag==='Inferred'?'  [AI inferred]':'')};
+const T2=['EXPERIMENT',PAPER.title||'Uploaded paper','','MODEL','Architecture: '+g('Model'),'','DATASET','Dataset: '+g('Dataset'),'Max sequence length: '+g('Max sequence length'),'','TRAINING'].concat(['Optimizer','Learning rate','Batch size','Epochs','Weight decay','Momentum','Scheduler','Warmup steps','Dropout','Seed'].map(k=>k+': '+g(k)),['','ENVIRONMENT'],['Hardware','Precision','Software versions'].map(k=>k+': '+g(k)),['','MISSING (blockers)'],S.mis.map(r=>'- '+r.param+' ['+r.impact+']'),['','EXECUTION STATUS','Not executed. Exact reproduction cannot be guaranteed until the missing items are resolved.']);
+window.CPT=T2.join('\n');show('<h3>Reproduction protocol</h3><pre class="m" style="white-space:pre-wrap;font-size:12px">'+esc(window.CPT)+'</pre><button class="btn" onclick="cp(window.CPT)">Copy</button>')}
+function attempt(){const S=stats(),un=S.crit.concat(S.high).filter(r=>!V[r.param]);
+if(un.length)show('<h3>⛔ Cannot execute exact reproduction</h3><p>Critical information is missing: <b>'+esc(un.map(r=>r.param).join(', '))+'</b>.</p><p class="lab">Set these on the Reconstruction page (they will be marked User configured and unverified) or send the author questions. Nothing was run.</p>');
+else show('<h3>Configuration is complete enough to attempt reproduction</h3><p>The execution backend is not connected in this prototype, so no experiment was run and no reproduced result exists.</p><p class="lab">Planned: bounded CPU runs in isolated workers with recorded commit, command, seed, logs and metrics.</p>')}
+function rep(){const S=stats(),d=PAPER,R=S.R,m=d.reported_metric||{};
+const row=r=>{const ed=ED[r.param],cur=V[r.param],t=ed?'User':tg(r);return `<div class="m">${esc(r.param)}: ${esc((ed?cur:r.value)||'Not reported')} <span class="tag ${t}">${L[t]}</span>${r.section&&r.ev_ok&&!ed&&r.tag==='Reported'?' <span class="lab">📄 '+esc(r.section)+'</span>':''}</div>`};
+const env=['Hardware','Precision','Software versions'].map(k=>R.find(r=>r.param===k)).filter(Boolean),bl=S.crit.concat(S.high),qs=qsList();
+const ev=R.filter(r=>r.ev_ok&&r.tag==='Reported').map(r=>`<div class="lab">${esc(r.param)} — “${esc(r.evidence.length>150?r.evidence.slice(0,150)+'…':r.evidence)}” (${esc(r.section||'paper')})</div>`).join('');
+$('doc').innerHTML=`<span class="badge">${d.example?'Precomputed example':'Analysis from your upload'} · Execution: not run</span><h2 style="margin:10px 0">Reproducibility Report</h2><div class="m lab">Paper: ${esc(d.title||'Uploaded paper')} · Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+<h4>Reproducibility Verdict</h4><b>${S.v[1]} ${S.v[2]}</b><div class="lab">Execution status: Not executed · Evidence coverage: ${S.rep.length} of ${S.ap.length} applicable parameters reported (${S.comp}%) · Blockers: ${bl.length} critical or high-impact items not reported</div>
+<h4>Executive Summary</h4>Published result: ${esc(PUBS||'not stated')}${m.name?' ('+esc(m.name)+')':''}, reported by the authors. No reproduction was executed, so no reproduced result is reported. ${bl.length?bl.length+' critical or high-impact details are missing, so exact reproduction cannot currently be guaranteed.':'No critical blockers were found.'}
+<h4>Original Method</h4>${esc(d.summary.methodology||'')}
+<h4>Reconstructed Configuration</h4>${R.filter(r=>r.tag!=='NotApplicable').map(row).join('')}
+<h4>Environment</h4>${env.map(row).join('')}
+<h4>Reproduction Blockers</h4>${bl.length?bl.map(r=>`<div>🔴 <b>${esc(r.param)}</b> — ${r.impact}. <span class="lab">${esc(r.why)}</span></div>`).join(''):'None'}
+<h4>Author Questions</h4>${qs.length?'<ol>'+qs.map(q=>'<li>'+esc(q)+'</li>').join('')+'</ol>':'None'}
+<h4>Evidence</h4>${ev||'No verified quotes.'}
+<h4>Next Steps</h4>Obtain code or author answers → resolve missing parameters → execute the experiment → compare results.
+<h4>Reproduction Limitations</h4>Analysis is AI-assisted. Each Reported value comes with a quote that was checked against the extracted paper text (first 24,000 characters). Nothing was executed; the simulation preview in the app is illustrative and is not a reproduction.`}
+function shareRep(){cp($('doc').innerText)}
+function dlCfg(){const S=stats(),o={paper:PAPER.title,published_result:PUBS||null,execution:'not executed',parameters:S.R.map(r=>({param:r.param,value:ED[r.param]?V[r.param]:r.value,status:ED[r.param]?'user_configured':r.tag,section:r.section||null,evidence:r.evidence||null}))};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,2)],{type:'application/json'}));a.download='experiment-config.json';a.click()}
+let tm=null,ep=0,tl=[],vl=[],paused=false,t0=0;
+const logs=(e)=>['Training...','Validation...','Checkpoint saved...'];
+function draw(){const f=(a,c)=>a.length?`<polyline fill="none" stroke="${c}" stroke-width="2" points="${a.map((v,i)=>`${i*6},${130-v*38}`).join(' ')}"/>`:'';$('ch').innerHTML=`<rect width="600" height="140" fill="none" stroke="var(--bd)"/>`+f(tl,'#8b5cf6')+f(vl,'#22d3ee')+'<text x="8" y="14">train (violet) · val (cyan)</text>'}
+function run(){clearInterval(tm);ep=0;tl=[];vl=[];paused=false;t0=Date.now();$('tm').innerHTML='Loading dataset '+(V.Dataset||'')+'...<br>Initializing model '+(V.Model||'')+'...<br>Optimizer '+(V.Optimizer||'?')+', lr '+(V['Learning rate']||'unset')+', batch '+(V['Batch size']||'?')+'<br>';$('rs').textContent='● Running (simulated)';$('rs').style.color='var(--ok)';
+tm=setInterval(()=>{if(paused)return;ep++;const a=3.2*Math.exp(-ep/22)+.3+Math.random()*.04,b=a+.12+Math.random()*.05;tl.push(a);vl.push(b);
+$('ep').textContent=EPN()+'/'+EN();$('lo').textContent=a.toFixed(2)+' / '+b.toFixed(2);$('gu').textContent=(88+Math.random()*9|0)+'%';$('me').textContent=(31+Math.random()*3).toFixed(1)+' GB';$('el').textContent=((Date.now()-t0)/1000|0)+'s';$('pb').style.width=ep+'%';
+$('tm').innerHTML+=`Epoch ${EPN()}/${EN()} — loss ${a.toFixed(4)} val ${b.toFixed(4)}${ep%20==0?'<br>Checkpoint saved...':''}<br>`;$('tm').scrollTop=1e5;draw();
+if(ep>=100){clearInterval(tm);$('rs').textContent='✓ Simulation complete';T('Simulation complete — see readiness');setTimeout(()=>{P('results')},900)}},100)}
+const pz=()=>{paused=!paused;$('rs').textContent=paused?'● Paused':'● Running';$('rs').style.color=paused?'var(--wa)':'var(--ok)'};
+const stp=()=>{clearInterval(tm);$('rs').textContent='■ Stopped';$('rs').style.color='var(--er)'};
+const A=[['Likely causes of a 0.3% gap: learning rate (inferred 0.0005), batch size 128 vs 256, and an unreported seed. Each is flagged in the Experiment Diff.'],['Missing: random seed, max sequence length, warmup schedule. I did not guess them.'],['Inferred (not confirmed): learning rate, epoch count, BPE tokenizer. Reported: model, dataset, optimizer, batch size.']];
+async function ask(q){q=q||$('ci').value.trim();if(!q)return;$('ci').value='';const c=$('cl');c.innerHTML+='<p class="u">'+esc(q)+'</p>';
+if(!window.storagePath){c.innerHTML+='<p>Upload a paper first (Papers page), then ask me about it.</p>';c.scrollTop=1e5;return}
+c.innerHTML+='<p id="ty">Thinking…</p>';c.scrollTop=1e5;
+try{const r=await fetch('/.netlify/functions/copilot',{method:'POST',body:JSON.stringify({question:q,storage_path:window.storagePath})});const d=await r.json();if(!r.ok)throw new Error('['+(d.stage||'error')+'] '+d.error);$('ty').outerHTML='<p>'+esc(d.answer).replace(/\n/g,'<br>')+'</p>'}catch(e){$('ty').outerHTML='<p style="color:var(--er)">✗ '+esc(e.message)+'</p>'}c.scrollTop=1e5}
+const tc=()=>{const c=$('cp');c.style.display=c.style.display==='block'?'none':'block'};
+</script></body></html>

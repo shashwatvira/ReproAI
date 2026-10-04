@@ -105,7 +105,7 @@ tr.x td{background:#f8717114}tr.y td{background:#fbbf2414}details summary{cursor
 
 <div class="pg" id="pg-results"><div id="vd"></div>
 <div class="grid" style="margin:12px 0"><div class="card"><div class="lab">Published result</div><div class="kpi m" id="pr">–</div><div class="lab" id="prn">Reported by authors</div></div>
-<div class="card"><div class="lab">Reproduction status</div><div class="kpi" style="font-size:19px;color:var(--wa)">⚠ Not experimentally verified</div><div class="lab">Execution: not run. No reproduced result exists.</div></div></div>
+<div class="card" id="rsc"></div></div>
 <h3>Reproduction Readiness</h3><div class="tw"><table id="rd"></table></div>
 <h3 style="margin-top:20px">Reproduction Blockers</h3><div id="bk"></div>
 <h3 style="margin-top:20px">Evidence dimensions</h3><p class="lab">Each dimension depends on what the paper reports. There is no single composite score.</p><div id="ev"></div>
@@ -162,7 +162,7 @@ rp('Dataset','SST-2 (GLUE benchmark)','We use SST-2 from the GLUE benchmark (67,
 rp('Optimizer','AdamW',Q1,SEC4),ms('Learning rate',1),rp('Batch size','32',Q1,SEC4),rp('Epochs','3',Q2,SEC4),ms('Seed',1),rp('Hardware','Single GPU',Q3,SEC4),rp('Precision','FP16 mixed precision',Q3,SEC4),
 {param:'Momentum',value:'Not applicable',tag:'NotApplicable',evidence:'',section:'',ev_ok:false},rp('Weight decay','0.01',Q1,SEC4),rp('Scheduler','Linear learning-rate decay',Q2,SEC4),ms('Max sequence length',1),ms('Warmup steps',1),ms('Dropout',1),ms('Software versions',0)]};
 function res(){const S=stats(),R=S.R,m=PAPER.reported_metric||{};
-$('vd').innerHTML=vdHTML();$('pr').textContent=PUBS||'Not stated';$('prn').textContent='Reported by authors'+(m.name?' · '+m.name:'');
+$('vd').innerHTML=vdHTML();rsc();$('pr').textContent=PUBS||'Not stated';$('prn').textContent='Reported by authors'+(m.name?' · '+m.name:'');
 const codeRow={Yes:['Reported','🟢 Code released'],No:['Miss','🔴 Code not released']}[PAPER.code_available]||['Inferred','🟡 Unclear'];
 $('rd').innerHTML='<tr><th>Component</th><th>Status</th><th>Impact if missing</th></tr>'+R.filter(r=>r.tag!=='NotApplicable').map(r=>{const t=tg(r);return `<tr><td>${esc(NM[r.param]||r.param)}</td><td><span class="tag ${t}">${L[t]}</span></td><td>${r.tag==='Reported'?'—':'<span class="i'+r.impact+'">'+r.impact+'</span>'}</td></tr>`}).join('')+`<tr><td>Code</td><td><span class="tag ${codeRow[0]}">${codeRow[1]}</span></td><td>—</td></tr>`;
 const bl=S.crit.concat(S.high),oth=S.mis.filter(r=>bl.indexOf(r)<0);
@@ -176,7 +176,7 @@ $('ev').innerHTML=row('Code availability','Whether the paper says code is releas
 +row('Configuration completeness','Share of applicable parameters the paper explicitly reports',S.rep.length+' of '+S.ap.length+' · '+S.comp+'%',`${S.rep.length} of ${S.ap.length} applicable parameters are explicitly reported. ${S.inf.length} AI inferred, ${S.mis.length} not reported; ${R.length-S.ap.length} not applicable (excluded from the count). Completeness = reported ÷ applicable.`,S.comp)
 +row('Environment details reported','Hardware, numeric precision and software versions the paper states',envRep+' of '+envs.length+' · '+envP+'%','Counts hardware, numeric precision and software versions that the paper explicitly reports. Software versions count only when version numbers are given.',envP)
 +row('Seed','Whether a random seed is reported',seedR.tag==='Reported'?'🟢 Reported: '+esc(seedR.value):(ED.Seed&&V.Seed?'🟣 Set by you ('+esc(V.Seed)+') — unverified':'🔴 Not reported'),'A reported seed allows identical initialization and data order.')
-+row('Result consistency','Needs an executed run','— not available','A reproduced result is required to measure consistency. This prototype has not executed the experiment.');
++row('Result consistency','Spread of the metric across random seeds',PR?'σ = '+PR.sd.toFixed(1)+' pts over '+PR.accs.length+' seeds':'— run the proxy experiment','Measured by really re-running the proxy experiment with different seeds. It shows how much a result moves from seed noise alone.');
 $('df').innerHTML='<tr><th>Parameter</th><th>Published</th><th>Reproduction config</th><th>Impact</th></tr>'+R.map(r=>{const na=r.tag==='NotApplicable',cur=V[r.param],ed=!!ED[r.param];let pub,mine,imp,cls='';
 if(na){pub='Not applicable';mine='—';imp='—'}
 else if(r.tag==='Missing'){pub='Not reported';mine=cur?cur+' (you)':'Not configured';imp=cur?'🟣 Set by you — unverified':`<span class="i${r.impact}">${r.impact}</span>${why(esc(r.why))}`;cls=cur?'y':'x'}
@@ -202,11 +202,11 @@ const crit=mis.filter(r=>r.impact==='Critical'),high=mis.filter(r=>r.impact==='H
 const v=(crit.length>=3||mis.length>=8)?['bad','🔴','Not reproducible as published']:((crit.length===0&&high.length===0&&mis.length<=2)?['ok','🟢','Ready to attempt reproduction']:['mid','🟠','Partially reproducible']);
 const risk=(crit.length>=1||high.length>=3)?'HIGH':((high.length>=1||mis.length>=2)?'MEDIUM':'LOW');
 return{R,ap,rep,inf,mis,crit,high,v,risk,comp:Math.round(100*rep.length/(ap.length||1))}}
-function vdHTML(){const S=stats();return `<div class="vd ${S.v[0]}"><b>${S.v[1]} ${S.v[2]}</b> <span class="lab">· Execution: not run · ${S.crit.length+S.high.length} critical or high-impact details not reported</span></div>`}
+function vdHTML(){const S=stats();return `<div class="vd ${S.v[0]}"><b>${S.v[1]} ${S.v[2]}</b> <span class="lab">· Execution: ${window.PR?'proxy run completed':'not run'} · ${S.crit.length+S.high.length} critical or high-impact details not reported</span></div>`}
 function evw(i){const c=PAPER.config[i],t=tg(c);$('evb').innerHTML=`<h3>${esc(c.param)}: ${esc(c.value)}</h3><p><span class="tag ${t}">${L[t]}</span> <span class="lab">📄 ${esc(c.section||'Section not identified')}</span></p><blockquote>“${esc(c.evidence)}”</blockquote><p class="lab">✓ Exact-text check: this sentence was found in the extracted paper text.</p><button class="btn" onclick="$('evm').style.display='none'">Close</button>`;$('evm').style.display='flex'}
 function loadPaper(d,quiet){d.config.forEach(c=>{if(['Reported','Inferred','Missing','NotApplicable'].indexOf(c.tag)<0)c.tag='Missing'});
 Object.keys(V).forEach(k=>V[k]='');d.config.forEach(c=>{if(c.param in V)V[c.param]=c.tag==='Missing'?'':c.value});
-window.PAPER=d;window.ED={};window.SIM=null;V.Metric=(d.reported_metric&&d.reported_metric.name)||'';
+window.PAPER=d;window.ED={};window.SIM=null;window.PR=null;V.Metric=(d.reported_metric&&d.reported_metric.name)||'';
 const m=d.reported_metric||{};window.PUBS=m.value?String(m.value):'';window.PUB=parseFloat(PUBS)||null;window.UNIT=PUBS.replace(/[0-9.\s]/g,'');
 $('pq').textContent=d.summary.question||'';$('pm').textContent=d.summary.methodology||'';$('pe').textContent=d.summary.evaluation||'';
 $('cf').innerHTML='<tr><th>Parameter</th><th>Value</th><th>Status</th><th>Evidence</th></tr>'+d.config.map((c,i)=>{const t=tg(c);return `<tr><td>${esc(c.param)}</td><td class="m">${esc(c.value||'Not reported')}</td><td><span class="tag ${t}">${L[t]}</span></td><td>${c.evidence?`<button class="chip" onclick="evw(${i})">📄 ${esc(c.section||'Paper')} · View evidence</button>`:(c.tag==='Inferred'?'<span class="lab">No supporting quote</span>':'<span class="lab">—</span>')}</td></tr>`}).join('');
@@ -227,14 +227,14 @@ const T2=['EXPERIMENT',PAPER.title||'Uploaded paper','','MODEL','Architecture: '
 window.CPT=T2.join('\n');show('<h3>Reproduction protocol</h3><pre class="m" style="white-space:pre-wrap;font-size:12px">'+esc(window.CPT)+'</pre><button class="btn" onclick="cp(window.CPT)">Copy</button>')}
 function attempt(){const S=stats(),un=S.crit.concat(S.high).filter(r=>!V[r.param]);
 if(un.length)show('<h3>⛔ Cannot execute exact reproduction</h3><p>Critical information is missing: <b>'+esc(un.map(r=>r.param).join(', '))+'</b>.</p><p class="lab">Set these on the Reconstruction page (they will be marked User configured and unverified) or send the author questions. Nothing was run.</p>');
-else show('<h3>Configuration is complete enough to attempt reproduction</h3><p>The execution backend is not connected in this prototype, so no experiment was run and no reproduced result exists.</p><p class="lab">Planned: bounded CPU runs in isolated workers with recorded commit, command, seed, logs and metrics.</p>')}
+else{proxy();show('<h3>Configuration is complete enough to attempt reproduction</h3><p>The execution backend is not connected in this prototype, so no experiment was run and no reproduced result exists.</p><p class="lab">Planned: bounded CPU runs in isolated workers with recorded commit, command, seed, logs and metrics.</p>')}}
 function rep(){const S=stats(),d=PAPER,R=S.R,m=d.reported_metric||{};
 const row=r=>{const ed=ED[r.param],cur=V[r.param],t=ed?'User':tg(r);return `<div class="m">${esc(r.param)}: ${esc((ed?cur:r.value)||'Not reported')} <span class="tag ${t}">${L[t]}</span>${r.section&&r.ev_ok&&!ed&&r.tag==='Reported'?' <span class="lab">📄 '+esc(r.section)+'</span>':''}</div>`};
 const env=['Hardware','Precision','Software versions'].map(k=>R.find(r=>r.param===k)).filter(Boolean),bl=S.crit.concat(S.high),qs=qsList();
 const ev=R.filter(r=>r.ev_ok&&r.tag==='Reported').map(r=>`<div class="lab">${esc(r.param)} — “${esc(r.evidence.length>150?r.evidence.slice(0,150)+'…':r.evidence)}” (${esc(r.section||'paper')})</div>`).join('');
 $('doc').innerHTML=`<span class="badge">${d.example?'Precomputed example':'Analysis from your upload'} · Execution: not run</span><h2 style="margin:10px 0">Reproducibility Report</h2><div class="m lab">Paper: ${esc(d.title||'Uploaded paper')} · Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
 <h4>Reproducibility Verdict</h4><b>${S.v[1]} ${S.v[2]}</b><div class="lab">Execution status: Not executed · Evidence coverage: ${S.rep.length} of ${S.ap.length} applicable parameters reported (${S.comp}%) · Blockers: ${bl.length} critical or high-impact items not reported</div>
-<h4>Executive Summary</h4>Published result: ${esc(PUBS||'not stated')}${m.name?' ('+esc(m.name)+')':''}, reported by the authors. No reproduction was executed, so no reproduced result is reported. ${bl.length?bl.length+' critical or high-impact details are missing, so exact reproduction cannot currently be guaranteed.':'No critical blockers were found.'}
+<h4>Executive Summary</h4>Published result: ${esc(PUBS||'not stated')}${m.name?' ('+esc(m.name)+')':''}, reported by the authors. ${window.PR?'A real proxy experiment (bag-of-words logistic regression on a 120-sentence synthetic sample, not the paper\'s model) reached '+PR.mean.toFixed(1)+'% ± '+PR.sd.toFixed(1)+' accuracy over '+PR.accs.length+' seeds; it is not comparable to the published number.':'No reproduction was executed, so no reproduced result is reported.'} ${bl.length?bl.length+' critical or high-impact details are missing, so exact reproduction cannot currently be guaranteed.':'No critical blockers were found.'}
 <h4>Original Method</h4>${esc(d.summary.methodology||'')}
 <h4>Reconstructed Configuration</h4>${R.filter(r=>r.tag!=='NotApplicable').map(row).join('')}
 <h4>Environment</h4>${env.map(row).join('')}
@@ -245,6 +245,23 @@ $('doc').innerHTML=`<span class="badge">${d.example?'Precomputed example':'Analy
 <h4>Reproduction Limitations</h4>Analysis is AI-assisted. Each Reported value comes with a quote that was checked against the extracted paper text (first 24,000 characters). Nothing was executed; the simulation preview in the app is illustrative and is not a reproduction.`}
 function shareRep(){cp($('doc').innerText)}
 function dlCfg(){const S=stats(),o={paper:PAPER.title,published_result:PUBS||null,execution:'not executed',parameters:S.R.map(r=>({param:r.param,value:ED[r.param]?V[r.param]:r.value,status:ED[r.param]?'user_configured':r.tag,section:r.section||null,evidence:r.evidence||null}))};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,2)],{type:'application/json'}));a.download='experiment-config.json';a.click()}
+
+const mulb=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const DS=(()=>{const P='wonderful brilliant moving charming delightful superb touching clever heartfelt engaging thrilling uplifting'.split(' '),N='dull boring tedious awful clumsy dreadful lifeless weak annoying miserable messy forgettable'.split(' '),F='film story drama comedy script cast ending plot'.split(' '),r=mulb(7),pk=a=>a[Math.floor(r()*a.length)],o=[];
+for(let i=0;i<120;i++){const y=i%2,A=y?P:N,B=y?N:P;let w=[pk(A),pk(A)];if(r()<.35)w.push(pk(B));o.push(['a '+w.join(' and ')+' '+pk(F),y])}return o})();
+function trainOnce(seed,lr,epochs,bs){const rnd=mulb(seed),idx=DS.map((_,i)=>i).sort(()=>rnd()-.5),tr=idx.slice(0,90),va=idx.slice(90);
+const vocab={};tr.forEach(i=>DS[i][0].split(' ').forEach(w=>{if(!(w in vocab))vocab[w]=Object.keys(vocab).length}));
+const x=i=>{const f=new Set();DS[i][0].split(' ').forEach(w=>{if(w in vocab)f.add(vocab[w])});return f};
+const w=new Array(Object.keys(vocab).length).fill(0).map(()=>(rnd()-.5)*.02);let b=0;const sg=z=>1/(1+Math.exp(-z));
+for(let e=0;e<epochs;e++){tr.sort(()=>rnd()-.5);for(let s=0;s<tr.length;s+=bs){const B=tr.slice(s,s+bs),gw={};let gb=0;B.forEach(i=>{const f=x(i);let z=b;f.forEach(k=>z+=w[k]);const er=sg(z)-DS[i][1];f.forEach(k=>gw[k]=(gw[k]||0)+er);gb+=er});for(const k in gw)w[k]-=lr*gw[k]/B.length;b-=lr*gb/B.length}}
+let ok=0;va.forEach(i=>{let z=b;x(i).forEach(k=>z+=w[k]);if((z>0?1:0)===DS[i][1])ok++});return 100*ok/va.length}
+async function proxy(){const el=$('rsc');el.innerHTML='<div class="lab">Reproduction status</div><div class="kpi" style="font-size:19px;color:var(--c)">● Running…</div>';await sl(50);
+const num=(k,d)=>{const v=parseFloat(V[k]);return v>0?[v,false]:[d,true]};const [lr,lrD]=num('Learning rate',0.5),[ep,epD]=num('Epochs',20),[bs,bsD]=num('Batch size',8);
+const accs=[];for(let s=1;s<=5;s++){accs.push(trainOnce(s,lr,Math.min(ep,200),Math.min(Math.round(bs),90)));await sl(120)}
+const mean=accs.reduce((a,c)=>a+c,0)/accs.length,sd=Math.sqrt(accs.reduce((a,c)=>a+(c-mean)**2,0)/accs.length);
+window.PR={accs,mean,sd,lr,ep,bs,def:[lrD&&'learning rate',epD&&'epochs',bsD&&'batch size'].filter(Boolean)};res();T('Proxy experiment finished — real computed result')}
+function rsc(){const el=$('rsc');if(!window.PR){el.innerHTML='<div class="lab">Reproduction status</div><div class="kpi" style="font-size:19px;color:var(--c)">◐ Ready to run</div><div class="lab">No reproduced result yet. Run a real proxy experiment in your browser: bag-of-words logistic regression, 5 seeds.</div><button class="btn pri" style="margin-top:10px" onclick="proxy()">▶ Run proxy reproduction</button>';return}
+const r=PR;el.innerHTML=`<div class="lab">Reproduction status <span class="tag Inferred">Proxy experiment · really executed</span></div><div class="kpi m" style="color:var(--ok)">${r.mean.toFixed(1)}% <span class="lab">± ${r.sd.toFixed(1)}</span></div><div class="lab">Validation accuracy over ${r.accs.length} seeds: ${r.accs.map(a=>a.toFixed(0)).join(', ')}. Config: lr ${r.lr}, ${r.ep} epochs, batch ${r.bs}${r.def.length?' (defaults used for: '+r.def.join(', ')+')':''}.</div><div class="lab" style="margin-top:6px">⚠ Proxy model on a 120-sentence synthetic sample, not the paper's model, so not comparable to the published result.</div><button class="btn" style="margin-top:8px" onclick="proxy()">↻ Re-run</button>`}
 let tm=null,ep=0,tl=[],vl=[],paused=false,t0=0;
 const logs=(e)=>['Training...','Validation...','Checkpoint saved...'];
 function draw(){const f=(a,c)=>a.length?`<polyline fill="none" stroke="${c}" stroke-width="2" points="${a.map((v,i)=>`${i*6},${130-v*38}`).join(' ')}"/>`:'';$('ch').innerHTML=`<rect width="600" height="140" fill="none" stroke="var(--bd)"/>`+f(tl,'#8b5cf6')+f(vl,'#22d3ee')+'<text x="8" y="14">train (violet) · val (cyan)</text>'}
